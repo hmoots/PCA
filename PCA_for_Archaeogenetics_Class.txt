@@ -1,0 +1,165 @@
+# A summary script for Archaeogenetics and the Human Past on February 23, 2023
+# UNIX text processing overview and running PCA
+
+# log onto the cluster using a secure shell (ssh)
+
+ssh [Your_Cnet_ID]@midway2.rcc.uchicago.edu
+
+ssh hmoots@midway2.rcc.uchicago.edu
+
+# enter a SLURM (Simple Linux Utility for Resource Management) interactive session
+# this is essentially computing power that is dedicated to our class
+
+sinteractive -p broadwl --account=know20005  --mem=4G 
+
+sinteractive -p broadwl --account=rcc-guest --mem=10G
+
+sinteractive -p broadwl --account=rcc-guest --reservation=know20005  --mem=4G 
+
+sinteractive -p broadwl --account=know20005 --reservation=know20005 --mem=4G 
+
+
+# change directories to where we will be working
+cd /project2/compbio/know20005/data
+
+# view what is there
+ls
+
+# move up one directory 
+cd ..
+
+# look at the path to working directory (e.g. where you are)
+pwd
+
+# make your own directory 
+#example mkdir hmoots
+
+mkdir [your_CNet_ID]
+
+#change directories into your directory
+cd [your_CNet_ID]
+
+# sort various columns (age, tissue type, group ID)
+
+#the following command will let you get a unique list of population names, in this case from Bulgaria:
+
+grep Mongolia v54.1_HO_public.tsv | cut -f12 | sort -k1,1 | uniq  
+grep Argentina v54.1_HO_public.tsv | cut -f12 | sort -k1,1 | uniq >> SouthAmerica_pops.tsv
+grep Peru v54.1_HO_public.tsv | cut -f12 | sort -k1,1 | uniq >> SouthAmerica_pops.tsv
+
+
+grep twin v54.1_HO_public.tsv | cut -f12 | sort -k1,1 | uniq | wc -l 
+grep twin v54.1_HO_public.tsv | cut -f12 | sort -k1,1 | uniq > Twin_pops.tsv
+
+
+# grep stands or "get regular expression" and returns all lines that contain Bulgaria in the .anno file
+
+# cut lets you subset your output to only a single column. By counting the header row (either visually in terminal using `head -1 Bulgaria v54.1_HO_public.anno` or by viewing it in excel) we found out the population ID is in the 12th column. You can subset to any column you want.
+
+#sort sorts whatever input you provide and you can specify if you wanted sorted numerically or alphabetically (see attached slides for details about these options)
+
+# uniq removes all duplicates (as long as the file is sorted) and provides you a unique list
+
+# the UNIX text processing powerpoint provides more info about how each command works, with details about the options
+
+
+# creating a PCA plot
+# 1. load modules
+module load openblas
+
+# 2. create a list of populations to keep for analysis from your larger data set
+#if a file with this name already exists in your folder, but with different population names, 
+#you can delete it by running `rm -rf populations.to.keep`
+
+cat <<EOT>> populations.to.keep
+Italy_Imperial.SG
+Italy_Imperial_o1.SG
+Italy_Imperial_o2.SG
+Italy_Imperial_o3.SG
+Italy_Imperial_o4.SG
+Italy_Imperial_o5.SG
+Italy_Imperial_oAfrica.SG
+Italy_Imperial_oCentralEuropean.SG
+EOT
+
+#3. create a parameter file to extract the eigenstrat format subset for all samples of interest
+#If this file already exists in your folder, you don't need to enter it again, you can use the one you already have
+
+cat <<EOT>> parSubset
+DIR: /project2/compbio/know20005/data
+
+genotypename: DIR/v54.1_HO_public.geno
+snpname:      DIR/v54.1_HO_public.snp
+indivname:    DIR/v54.1_HO_public.ind
+outputformat:    EIGENSTRAT
+indivoutname: pca.ind
+snpoutname: pca.snp
+genotypeoutname: pca.geno
+poplistname: populations.to.keep
+numoutlieriter: 0
+EOT
+
+#4. subset to individuals in the populations listed in populations.to.keep
+#this run a program that create files of just the population you specify, and this is the input to run PCA
+/project2/compbio/know20005/bin/eigensoft-6.1.4/bin/convertf -p parSubset | tee mySubset.log 
+
+#5. create a list of populations to use for pca analysis (e.g. your reference data set)
+#if a file with this name already exists in your folder, but with different population names, 
+#you can delete it by running `rm -rf populations.to.pca`
+
+cat <<EOT>> populations.to.pca
+Italy_Imperial.SG
+Italy_Imperial_o1.SG
+Italy_Imperial_o2.SG
+Italy_Imperial_o3.SG
+Italy_Imperial_o4.SG
+Italy_Imperial_o5.SG
+Italy_Imperial_oAfrica.SG
+Italy_Imperial_oCentralEuropean.SG
+EOT
+
+#6. create a parameter file to run PCA
+#If this file already exists in your folder, you don't need to enter it again, you can use the one you already have
+
+cat <<EOT>> parSmartPCA
+indivname: pca.ind
+snpname: pca.snp
+genotypename: pca.geno
+evecoutname: trial.evec
+evaloutname: trial.eval
+altnormstyle: NO 
+numoutevec: 10
+familynames: YES
+grmoutname: genetic_relatedness_matrix
+maxpops: 100
+killr2: YES
+r2thresh: 0.1
+lsqproject: YES
+numoutlieriter: 0
+poplistname: populations.as.reference
+popsizelimit: 25
+EOT
+
+# run PCA on the subset individuals
+/project2/compbio/know20005/bin/eigensoft-6.1.4/bin/smartpca -p parSmartPCA | tee myPCA.log
+
+#download from cluster - run this in the directory where you want your file to end up
+scp hmoots@midway2.rcc.uchicago.edu:/project2/compbio/know20005/users/eschaffer/trial.evec .
+
+scp hmoots@midway2.rcc.uchicago.edu:/project2/compbio/know20005/data/mjrimmer/trial.evec .
+
+
+scp hmoots@midway2.rcc.uchicago.edu:/project2/compbio/know20005/users/cisnerosi/trial.evec .
+
+scp hmoots@midway2.rcc.uchicago.edu:/project2/jnovembre/alisar/analyses/feems/example_data/larger_dataset/AADR.v44.allCoords.added.anno AADR.v44.allCoords.added.anno.tsv
+
+
+
+scp [your_CNET_ID]@midway2.rcc.uchicago.edu:/project2/compbio/know20005/users/[your_CNET_ID]/[your_file_name] .
+
+
+
+
+
+
+
