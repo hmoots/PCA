@@ -33,31 +33,34 @@ mkdir [your_CNet_ID]
 cd [your_CNet_ID]
 
 #we will be working with published human ancient DNA data that is curated in the AADR (Allen Ancient DNA Resource)
-#see README for more details and citation
+#Link to access AADR:
+#https://reich.hms.harvard.edu/allen-ancient-dna-resource-aadr-downloadable-genotypes-present-day-and-ancient-dna-data
 
-#sort various columns (age, tissue type, group ID)
+#Paper and citation for AADR
+#Mallick, S., Micco, A., Mah, M. et al. The Allen Ancient DNA Resource (AADR) a curated compendium of ancient human genomes. Sci Data 11, 182 (2024). 
+#https://doi.org/10.1038/s41597-024-03031-7
 
-#the following command will let you get a unique list of population names, in this case from Bulgaria:
+#you can download the files using ´wget´ 
+#for class we'll be using a shared copy of the download
 
-grep Mongolia v54.1_HO_public.tsv | cut -f12 | sort -k1,1 | uniq  
-grep Argentina v54.1_HO_public.tsv | cut -f12 | sort -k1,1 | uniq >> SouthAmerica_pops.tsv
-grep Peru v54.1_HO_public.tsv | cut -f12 | sort -k1,1 | uniq >> SouthAmerica_pops.tsv
+#we can search, filter and sort various columns in the .anno (age, tissue type, group ID) using bash commands
 
+#for instance, the following command will let you get a unique list of population names from a specific country, in this case from Bulgaria:
+# grep stands or "get regular expression" and returns all lines that contain Bulgaria in the .anno file
+grep Bulgaria v54.1_HO_public.tsv | cut -f12 | sort -k1,1 | uniq >> Bulgaria_pops.tsv 
 
+#you can search for other key phrases as well
 grep twin v54.1_HO_public.tsv | cut -f12 | sort -k1,1 | uniq | wc -l 
 grep twin v54.1_HO_public.tsv | cut -f12 | sort -k1,1 | uniq > Twin_pops.tsv
 
 
-# grep stands or "get regular expression" and returns all lines that contain Bulgaria in the .anno file
-
-# cut lets you subset your output to only a single column. By counting the header row (either visually in terminal using `head -1 Bulgaria v54.1_HO_public.anno` or by viewing it in excel) we found out the population ID is in the 12th column. You can subset to any column you want.
+# cut lets you subset your output to only a single column. By counting the header row (either visually in the terminal using `head -1 Bulgaria v54.1_HO_public.anno` or by viewing it in excel) we found out the population ID is in the 12th column. You can subset to any column you want.
 
 #sort sorts whatever input you provide and you can specify if you wanted sorted numerically or alphabetically (see attached slides for details about these options)
 
 # uniq removes all duplicates (as long as the file is sorted) and provides you a unique list
 
 # the UNIX text processing powerpoint provides more info about how each command works, with details about the options
-
 
 # creating a PCA plot
 # 1. load modules
