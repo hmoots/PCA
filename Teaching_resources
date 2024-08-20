@@ -2,7 +2,6 @@
 #UNIX text processing overview and running PCA
 
 #log onto the cluster using a secure shell (ssh)
-
 ssh [Your_Cnet_ID]@midway2.rcc.uchicago.edu
 
 ssh hmoots@midway2.rcc.uchicago.edu
