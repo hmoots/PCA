@@ -1,1 +1,109 @@
+#Noli_med_pca
 
+#PCA for BA to IA timelines
+library(tidyr)
+library(tibble)
+library(ggplot2)
+library(dplyr)
+library(cowplot)
+library(stringr)
+library(RColorBrewer)
+library(scales)
+library(ggrepel)
+
+setwd("~/Desktop/UChicago/Noli/PCA/2023/Med_PCA_v1/")
+
+pca_filepath = "Noli_provisional.evec"
+pca <- read.table(pca_filepath, col.names=c("ID", "PC1","PC2","PC2","PC4", "PC5","PC6", "PC7", "PC8","PC9", "PC10", "Population"))
+pca2 <- read.table(pca_filepath)
+
+pcs <- subset(pca2, V12 == 'Sardinian' | V12 == "Tunisian"  |V12 == "Egyptian" |
+                V12 == 'Greek' | V12 == 'Spanish' | V12 == 'English' | V12 == 'Turkish' | 
+                V12 == 'Hungarian' | #V12 == 'Palestinian' | V12 == 'Jew_Tunisian' |
+                V12 == "French" | V12 == 'Norwegian' | 
+                V12 == 'Armenian' |  V12 == "Iranian" | 
+                V12 == "TSI.SG" | V12 == 'Syrian' | V12 == "Druze" |V12 == 'Saudi' | 
+                V12 == "BedouinA" | V12 == 'Basque' | V12 == 'Lebanese' |
+                V12 == 'Adygei' | V12 == 'Georgian' | V12 == 'Cypriot' | 
+                V12 == 'Moroccan' | V12 == 'Mozabite' |V12 == "Libyan" | 
+                V12 == 'BedouinB' | 
+                V12 == "Sicilian",)
+
+pc_Noli <- subset(pca, Population == 'Noli',)
+
+pc_Italy <- subset(pca, Population == 'Noli' | Population == 'Italy_LA.SG' |
+                     Population == 'Italy_Medieval_EarlyModern_oCentralEuropean.SG' | 
+                     Population == 'Italy_North_EarlyMedieval_Langobards' |
+                     Population == 'Italy_LA_oCentralEuropean.SG' | Population == 'Italy_LA_oSardiniaLike.SG' |
+                     Population == 'Italy_Medieval_EarlyModern.SG',)
+
+
+
+##########################################################
+
+# Create a group-means data set for labeling
+gd <- pcs %>% 
+  group_by(V12) %>% 
+  summarise(
+    VAR1 = mean(V2),
+    VAR2 = mean(V3))
+
+new_gd <- gd %>%
+  mutate(V12 = ifelse(V12 == "TSI.SG", "Tuscan", V12))%>%
+  mutate(V12 = ifelse(V12 == "Jew_Tunisian", "Tunisian Jewish", V12))
+
+##############################################################
+#Noli_labeled      
+ggplot(pcs, aes(x=-V3, y=-V2)) +
+  geom_point(color="lightgrey") +
+  geom_text(data = new_gd, aes(x=-VAR2, y=-VAR1, label = V12), size = 6, check_overlap = TRUE) + 
+  theme(legend.title=element_blank()) +
+  geom_point(data=pc_Noli, aes(x=-PC2, y=-PC1), shape = 18, size = 6,  alpha = 0.95, color = "BLACK") +
+  #geom_label(data=pc_Noli, aes(x=-PC2, y=-PC1, label = ID), size = 2, check_overlap = TRUE, color = "RED") +
+  theme_classic() +
+  labs(title = "", x = "PC2 (2.981%)", y = "PC1 (5.163%)", color = "Population") +
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_text(size = 10, color = "black"),
+    axis.text = element_blank(),
+    axis.ticks = element_blank())
+
+
+##################################
+#ggsave("Med_1240K_Noli_only_shrinkon_v2.png", width = 12, height = 6)
+
+
+#plot interactive PCA
+pca1 <- ggplot(pcs, aes(x=-V3, y=-V2)) +
+  geom_point(color="lightgrey") +
+  geom_text(data = new_gd, aes(x=-VAR2, y=-VAR1, label = V12), size = 5, check_overlap = TRUE) + 
+  theme(legend.title=element_blank()) +
+  geom_point(data=pc_Noli, aes(x=-PC2, y=-PC1, color = ID), shape = 18, size = 2,  alpha = 0.95) +
+  theme_classic() +
+  labs(title = "", x = "PC2 (2.981%)", y = "PC1 (5.163%)", color = "Population") +
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_text(size = 10, color = "black"),
+    axis.text = element_blank(),
+    axis.ticks = element_blank())
+
+
+ggplotly(pca1)
+
+##############################################################
+#Italy Unlabeled      
+ggplot(pcs, aes(x=-V3, y=-V2)) +
+  geom_point(color="lightgrey") +
+  geom_text(data = new_gd, aes(x=-VAR2, y=-VAR1, label = V12), size = 5, check_overlap = TRUE) + 
+  theme(legend.title=element_blank()) +
+  geom_point(data=pc_Italy, aes(x=-PC2, y=-PC1, color = Population), shape = 18, size = 3,  alpha = 0.95) +
+  #geom_label(data=pc_Noli, aes(x=-PC2, y=-PC1, label = ID), size = 2, check_overlap = TRUE, color = "RED") +
+  theme_classic() +
+  labs(title = "", x = "PC2 (2.981%)", y = "PC1 (5.163%)", color = "Population") +
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_text(size = 10, color = "black"),
+    axis.text = element_blank(),
+    axis.ticks = element_blank())
+
+ggsave("Med_1240K-2024_Italy.png", width = 12, height = 6)
