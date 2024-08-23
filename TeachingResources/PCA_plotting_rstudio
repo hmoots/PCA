@@ -1,4 +1,4 @@
-#Noli_mediterranean_pca
+#Visualize PCA components for reference and projected datasets
 
 #PCA for BA to IA timelines
 library(ggplot2)
@@ -7,7 +7,7 @@ library(ggplot2)
 setwd("~/Desktop/UChicago/Noli/PCA/2023/Med_PCA_v1/")
 
 #read pca results in twice to plot reference and projected populations independently
-pca_filepath = "Noli_provisional.evec"
+pca_filepath = "Noli_provisional_pca.evec"
 pca <- read.table(pca_filepath, col.names=c("ID", "PC1","PC2","PC2","PC4", "PC5","PC6", "PC7", "PC8","PC9", "PC10", "Population"))
 pca2 <- read.table(pca_filepath)
 
