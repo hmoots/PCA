@@ -27,6 +27,7 @@ pc_ref <- subset(pca2, V12 == 'Sardinian' | V12 == "Tunisian"  |V12 == "Egyptian
                 V12 == 'BedouinB' | 
                 V12 == "Sicilian",)
 
+#subset your study populations into one or more dataframes
 pc_Noli <- subset(pca, Population == 'Noli',)
 
 pc_Italy <- subset(pca, Population == 'Noli' | Population == 'Italy_LA.SG' |
@@ -39,21 +40,21 @@ pc_Italy <- subset(pca, Population == 'Noli' | Population == 'Italy_LA.SG' |
 
 ##########################################################
 # Create a group-means data set for labeling
-gd <- pc_ref %>% 
+gm <- pc_ref %>% 
   group_by(V12) %>% 
   summarise(
     VAR1 = mean(V2),
     VAR2 = mean(V3))
 
-new_gd <- gd %>%
+new_gm <- gm %>%
   mutate(V12 = ifelse(V12 == "TSI.SG", "Tuscan", V12))%>%
   mutate(V12 = ifelse(V12 == "Jew_Tunisian", "Tunisian Jewish", V12))
 
 ##############################################################
-#Noli_labeled      
+#use ggplot2 to visualize your data    
 ggplot(pc_ref, aes(x=-V3, y=-V2)) +
   geom_point(color="lightgrey") +
-  geom_text(data = new_gd, aes(x=-VAR2, y=-VAR1, label = V12), size = 6, check_overlap = TRUE) + 
+  geom_text(data = new_gm, aes(x=-VAR2, y=-VAR1, label = V12), size = 6, check_overlap = TRUE) + 
   theme(legend.title=element_blank()) +
   geom_point(data=pc_Noli, aes(x=-PC2, y=-PC1), shape = 18, size = 6,  alpha = 0.95, color = "BLACK") +
   #geom_label(data=pc_Noli, aes(x=-PC2, y=-PC1, label = ID), size = 2, check_overlap = TRUE, color = "RED") +
@@ -66,14 +67,14 @@ ggplot(pc_ref, aes(x=-V3, y=-V2)) +
     axis.ticks = element_blank())
 
 
-##################################
-#ggsave("Med_1240K_Noli_only_shrinkon_v2.png", width = 12, height = 6)
+#save your figure as a png plot
+ggsave("Med_1240K_Noli_only_shrinkon_v2.png", width = 12, height = 6)
 
 
-#plot interactive PCA
+#you can also plot an interactive visualization using plotly
 pca1 <- ggplot(pc_ref, aes(x=-V3, y=-V2)) +
   geom_point(color="lightgrey") +
-  geom_text(data = new_gd, aes(x=-VAR2, y=-VAR1, label = V12), size = 5, check_overlap = TRUE) + 
+  geom_text(data = new_gm, aes(x=-VAR2, y=-VAR1, label = V12), size = 5, check_overlap = TRUE) + 
   theme(legend.title=element_blank()) +
   geom_point(data=pc_Noli, aes(x=-PC2, y=-PC1, color = ID), shape = 18, size = 2,  alpha = 0.95) +
   theme_classic() +
@@ -86,21 +87,3 @@ pca1 <- ggplot(pc_ref, aes(x=-V3, y=-V2)) +
 
 
 ggplotly(pca1)
-
-##############################################################
-#Italy Unlabeled      
-ggplot(pc_ref, aes(x=-V3, y=-V2)) +
-  geom_point(color="lightgrey") +
-  geom_text(data = new_gd, aes(x=-VAR2, y=-VAR1, label = V12), size = 5, check_overlap = TRUE) + 
-  theme(legend.title=element_blank()) +
-  geom_point(data=pc_Italy, aes(x=-PC2, y=-PC1, color = Population), shape = 18, size = 3,  alpha = 0.95) +
-  #geom_label(data=pc_Noli, aes(x=-PC2, y=-PC1, label = ID), size = 2, check_overlap = TRUE, color = "RED") +
-  theme_classic() +
-  labs(title = "", x = "PC2 (#.##%)", y = "PC1 (#.##%)", color = "Population") +
-  theme(
-    strip.background = element_blank(),
-    strip.text.x = element_text(size = 10, color = "black"),
-    axis.text = element_blank(),
-    axis.ticks = element_blank())
-
-ggsave("Med_2024_Italy.png", width = 12, height = 6)
