@@ -1,17 +1,21 @@
 #Visualize PCA components for reference and projected datasets
 
-#PCA for BA to IA timelines
+#load libraries that you will need
 library(ggplot2)
 
-#set working difectoy
+#set working directory
 setwd("~/Desktop/UChicago/Noli/PCA/2023/Med_PCA_v1/")
 
-#read pca results in twice to plot reference and projected populations independently
+#read in pca results (.evec and .eval files)
 pca_filepath = "Noli_provisional_pca.evec"
-pca <- read.table(pca_filepath, col.names=c("ID", "PC1","PC2","PC2","PC4", "PC5","PC6", "PC7", "PC8","PC9", "PC10", "Population"))
-pca2 <- read.table(pca_filepath)
+eval_filepath = "Noli_provisional_pca.eval"
 
-pcs <- subset(pca2, V12 == 'Sardinian' | V12 == "Tunisian"  |V12 == "Egyptian" |
+#creating two data frames from the .evec file will allow you plot reference and projected populations independently
+pca <- read.table(pca_filepath, col.names=c("ID", "PC1","PC2","PC2","PC4", "PC5","PC6", "PC7", "PC8","PC9", "PC10", "Population"))
+pca2 <- read.table(pca_filepath) 
+
+#subset to a list of the reference (in this case, modern) populations you want to display
+pc_ref <- subset(pca2, V12 == 'Sardinian' | V12 == "Tunisian"  |V12 == "Egyptian" |
                 V12 == 'Greek' | V12 == 'Spanish' | V12 == 'English' | V12 == 'Turkish' | 
                 V12 == 'Hungarian' | #V12 == 'Palestinian' | V12 == 'Jew_Tunisian' |
                 V12 == "French" | V12 == 'Norwegian' | 
@@ -35,7 +39,7 @@ pc_Italy <- subset(pca, Population == 'Noli' | Population == 'Italy_LA.SG' |
 
 ##########################################################
 # Create a group-means data set for labeling
-gd <- pcs %>% 
+gd <- pc_ref %>% 
   group_by(V12) %>% 
   summarise(
     VAR1 = mean(V2),
@@ -47,7 +51,7 @@ new_gd <- gd %>%
 
 ##############################################################
 #Noli_labeled      
-ggplot(pcs, aes(x=-V3, y=-V2)) +
+ggplot(pc_ref, aes(x=-V3, y=-V2)) +
   geom_point(color="lightgrey") +
   geom_text(data = new_gd, aes(x=-VAR2, y=-VAR1, label = V12), size = 6, check_overlap = TRUE) + 
   theme(legend.title=element_blank()) +
@@ -67,7 +71,7 @@ ggplot(pcs, aes(x=-V3, y=-V2)) +
 
 
 #plot interactive PCA
-pca1 <- ggplot(pcs, aes(x=-V3, y=-V2)) +
+pca1 <- ggplot(pc_ref, aes(x=-V3, y=-V2)) +
   geom_point(color="lightgrey") +
   geom_text(data = new_gd, aes(x=-VAR2, y=-VAR1, label = V12), size = 5, check_overlap = TRUE) + 
   theme(legend.title=element_blank()) +
@@ -85,7 +89,7 @@ ggplotly(pca1)
 
 ##############################################################
 #Italy Unlabeled      
-ggplot(pcs, aes(x=-V3, y=-V2)) +
+ggplot(pc_ref, aes(x=-V3, y=-V2)) +
   geom_point(color="lightgrey") +
   geom_text(data = new_gd, aes(x=-VAR2, y=-VAR1, label = V12), size = 5, check_overlap = TRUE) + 
   theme(legend.title=element_blank()) +
