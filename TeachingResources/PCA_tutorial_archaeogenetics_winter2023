@@ -1,52 +1,53 @@
-#A summary script for Archaeogenetics and the Human Past on February 23, 2023
-#UNIX text processing overview and running PCA
+# A summary script for Archaeogenetics and the Human Past on February 23, 2023
+# UNIX text processing overview and running PCA
+# This file also contains new commands we discussed in class and commented descriptions 
 
-#log onto the cluster using a secure shell (ssh)
+# log onto the cluster using a secure shell (ssh)
 ssh [Your_Cnet_ID]@midway2.rcc.uchicago.edu
 
-ssh hmoots@midway2.rcc.uchicago.edu
-
-#enter a SLURM (Simple Linux Utility for Resource Management) interactive session
-#specify the account and reservation (computing resources dedicated to our class)
+# enter a SLURM (Simple Linux Utility for Resource Management) interactive session
+# specify the account and reservation (computing resources dedicated to our class)
 
 sinteractive -p broadwl --account=know20005 --reservation=know20005 --mem=4G 
 
-#change directories to where we will be working
+# change directories (cd) to where we will be working
 cd /project2/compbio/know20005/data
 
-#view what is there
+# view the contents of that directory
 ls
 
-#move up one directory 
+# move up one directory 
 cd ..
 
-#look at the path to the working directory (e.g. where you are in the directory structure)
+# look at the path to the working directory (e.g. where you are in the directory structure)
 pwd
 
-#make your own directory 
-#example mkdir hmoots
+# make your own directory 
+# example mkdir hmoots
 
 mkdir [your_CNet_ID]
 
-#change directories into your directory
+# change directories into your directory
 cd [your_CNet_ID]
 
-#we will be working with published human ancient DNA data that is curated in the AADR (Allen Ancient DNA Resource)
-#Link to access AADR:
-#https://reich.hms.harvard.edu/allen-ancient-dna-resource-aadr-downloadable-genotypes-present-day-and-ancient-dna-data
+# we will be working with published human ancient DNA data that is curated in the AADR (Allen Ancient DNA Resource)
+# Link to access AADR:
+# https://reich.hms.harvard.edu/allen-ancient-dna-resource-aadr-downloadable-genotypes-present-day-and-ancient-dna-data
 
-#Paper and citation for AADR
-#Mallick, S., Micco, A., Mah, M. et al. The Allen Ancient DNA Resource (AADR) a curated compendium of ancient human genomes. Sci Data 11, 182 (2024). 
-#https://doi.org/10.1038/s41597-024-03031-7
+# Paper and citation for AADR
+# Mallick, S., Micco, A., Mah, M. et al. The Allen Ancient DNA Resource (AADR) a curated compendium of ancient human genomes. Sci Data 11, 182 (2024). 
+# https://doi.org/10.1038/s41597-024-03031-7
 
-#you can download the files using ´wget´ 
-#for class we'll be using a shared copy of the download
+# you can download the files using ´wget´ and the link to the file from the above website
+# for class we'll be using a shared copy that has already been downloaded
 
-#we can search, filter and sort various columns in the .anno (age, tissue type, group ID) using bash commands
+# we can search, filter and sort various columns in the .anno (age, tissue type, group ID) using bash commands
 
-#for instance, the following command will let you get a unique list of population names from a specific country, in this case from Bulgaria:
-# grep stands or "get regular expression" and returns all lines that contain Bulgaria in the .anno file
+# for instance, the following command will let you get a unique list of population names from a specific country, in this case from Bulgaria:
 grep Bulgaria v54.1_HO_public.tsv | cut -f12 | sort -k1,1 | uniq >> Bulgaria_pops.tsv 
+
+# "grep" stands or "get regular expression" and returns all lines that contain Bulgaria in the .anno file
+# "cut" allows you to print only column of the file you are working with, in this case the 12th collumn
 
 #you can search for other key phrases as well
 grep twin v54.1_HO_public.tsv | cut -f12 | sort -k1,1 | uniq | wc -l 
