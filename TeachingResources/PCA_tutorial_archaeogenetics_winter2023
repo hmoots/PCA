@@ -95,13 +95,11 @@ poplistname: populations.to.keep
 numoutlieriter: 0
 EOT
 
-#4. subset to individuals in the populations listed in populations.to.keep
-#this run a program that create files of just the population you specify, and this is the input to run PCA
+# 4. subset to individuals in the populations listed in populations.to.keep
+# this run a program that create files of just the population you specify, and this is the input to run PCA
 /project2/compbio/know20005/bin/eigensoft-6.1.4/bin/convertf -p parSubset | tee mySubset.log 
 
-#5. create a list of populations to use for pca analysis (e.g. your reference data set)
-#if a file with this name already exists in your folder, but with different population names, 
-#you can delete it by running `rm -rf populations.to.pca`
+# 5. create a list of populations to use for pca analysis (e.g. your reference data set)
 
 cat <<EOT>> populations.to.pca
 Italy_Imperial.SG
@@ -114,8 +112,7 @@ Italy_Imperial_oAfrica.SG
 Italy_Imperial_oCentralEuropean.SG
 EOT
 
-#6. create a parameter file to run PCA
-#If this file already exists in your folder, you don't need to enter it again, you can use the one you already have
+# 6. create a parameter file to run PCA
 
 cat <<EOT>> parSmartPCA
 indivname: pca.ind
@@ -139,18 +136,7 @@ EOT
 # run PCA on the subset individuals
 /project2/compbio/know20005/bin/eigensoft-6.1.4/bin/smartpca -p parSmartPCA | tee myPCA.log
 
-#download from cluster - run this in the directory where you want your file to end up
-scp hmoots@midway2.rcc.uchicago.edu:/project2/compbio/know20005/users/eschaffer/trial.evec .
-
-scp hmoots@midway2.rcc.uchicago.edu:/project2/compbio/know20005/data/mjrimmer/trial.evec .
-
-
-scp hmoots@midway2.rcc.uchicago.edu:/project2/compbio/know20005/users/cisnerosi/trial.evec .
-
-scp hmoots@midway2.rcc.uchicago.edu:/project2/jnovembre/alisar/analyses/feems/example_data/larger_dataset/AADR.v44.allCoords.added.anno AADR.v44.allCoords.added.anno.tsv
-
-
-
+# download from the cluster - run this in the directory on your local computer where you want to save the file
 scp [your_CNET_ID]@midway2.rcc.uchicago.edu:/project2/compbio/know20005/users/[your_CNET_ID]/[your_file_name] .
 
 
