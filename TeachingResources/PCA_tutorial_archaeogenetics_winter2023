@@ -46,29 +46,26 @@ cd [your_CNet_ID]
 # for instance, the following command will let you get a unique list of population names from a specific country, in this case from Bulgaria:
 grep Bulgaria v54.1_HO_public.tsv | cut -f12 | sort -k1,1 | uniq >> Bulgaria_pops.tsv 
 
-# "grep" stands or "get regular expression" and returns all lines that contain Bulgaria in the .anno file
-# "cut" allows you to print only column of the file you are working with, in this case the 12th collumn
+# "grep" stands for "get regular expression" and returns all lines that contain Bulgaria in the .anno file
+# "cut" allows you to print only the column of the file you are working with, in this case, the 12th column
 
-#you can search for other key phrases as well
+# you can filter by other key phrases as well
 grep twin v54.1_HO_public.tsv | cut -f12 | sort -k1,1 | uniq | wc -l 
 grep twin v54.1_HO_public.tsv | cut -f12 | sort -k1,1 | uniq > Twin_pops.tsv
 
+# "cut" lets you subset your output to only a single column. By counting the header row (either visually in the terminal using `head -1 Bulgaria v54.1_HO_public.anno` or by viewing it in excel) we found out the population ID is in the 12th column. You can subset to any column you want.
 
-# cut lets you subset your output to only a single column. By counting the header row (either visually in the terminal using `head -1 Bulgaria v54.1_HO_public.anno` or by viewing it in excel) we found out the population ID is in the 12th column. You can subset to any column you want.
+# "sort" sorts whatever input you provide and you can specify if you wanted sorted numerically or alphabetically (see attached slides for details about these options)
 
-#sort sorts whatever input you provide and you can specify if you wanted sorted numerically or alphabetically (see attached slides for details about these options)
+# "uniq" removes all duplicate lines (as long as the file is sorted) and provides you a unique list
 
-# uniq removes all duplicates (as long as the file is sorted) and provides you a unique list
-
-# the UNIX text processing powerpoint provides more info about how each command works, with details about the options
+# the UNIX text processing slide deck from class provides more info about how each command works, with details about the options
 
 # creating a PCA plot
 # 1. load modules
 module load openblas
 
-# 2. create a list of populations to keep for analysis from your larger data set
-#if a file with this name already exists in your folder, but with different population names, 
-#you can delete it by running `rm -rf populations.to.keep`
+# 2. create a list of populations to for analysis your analysis from the larger data set
 
 cat <<EOT>> populations.to.keep
 Italy_Imperial.SG
@@ -81,8 +78,8 @@ Italy_Imperial_oAfrica.SG
 Italy_Imperial_oCentralEuropean.SG
 EOT
 
-#3. create a parameter file to extract the eigenstrat format subset for all samples of interest
-#If this file already exists in your folder, you don't need to enter it again, you can use the one you already have
+# 3. create a parameter file to extract the eigenstrat format subset for all samples of interest
+# If this file already exists in your folder, you don't need to enter it again, you can use the one you already have
 
 cat <<EOT>> parSubset
 DIR: /project2/compbio/know20005/data
