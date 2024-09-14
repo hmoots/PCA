@@ -1,6 +1,8 @@
-#Visualize PCA components for reference and projected datasets
+# Visualize PCA components, generated using smartPCA 
+# Tools and citations in README
+# This visualization enables visualizing reference and projected datasets together
 
-#load libraries that you will need
+# load the libraries that you will need
 library(ggplot2)
 
 #set working directory
