@@ -1,6 +1,6 @@
 # Creating a vectorized output for your PCA plots
 # Code based on https://nalinan.medium.com/how-to-vectorize-plots-from-r-in-powerpoint-bad7c238e86a
-# Which was inspried by https://x.com/leonardojo/status/1828773827134062967
+# Which was inspired by https://x.com/leonardojo/status/1828773827134062967
 
 # Install necessary packages if not already installed
 install.packages("svglite")
