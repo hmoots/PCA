@@ -1,6 +1,15 @@
 This file contains teaching resources for users new to computational analysis
 The scripts here were used in "Archaeogenetics and the Human Past" (Winter 2023, Moots) 
 
+The tool used in these exercises is smartPCA, part of the EIGENSOFT package
+More details here - https://github.com/chrchang/eigensoft/blob/master/POPGEN/README
+
+"EIGENSOFT is copyright by Harvard University and The Broad Institute"
+http://www.hsph.harvard.edu/alkes-price/software/ 
+
+EIGENSOFT Frequently Asked Questions:
+https://www.hsph.harvard.edu/alkes-price/eigensoft-frequently-asked-questions/
+
 For our class projects, we will be working with the Allen Ancient DNA Resource (AARD)
 
 Link to access AADR:
