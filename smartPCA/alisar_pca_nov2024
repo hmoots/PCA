@@ -1,0 +1,100 @@
+#oct 2024 pca - noli, kish, alisar, hayyat
+
+#PCA for BA to IA timelines
+library(tidyr)
+library(ggplot2)
+
+setwd("~/Desktop/")
+pca_filepath = "nov2024_asor_shrink.evec"
+
+# The palette with black:
+clrs <- c("#D55E00","#E69F00", "#009E73", "#56B4E9", "#0072B2", "#CC79A7", "#F0E442")
+clrs <- c( "#56B4E9", "#0072B2")
+
+
+pca <- read.table(pca_filepath, col.names=c("ID", "PC1","PC2","PC2","PC4", "PC5","PC6", "PC7", "PC8","PC9", "PC10", "Population"))
+pca2 <- read.table(pca_filepath)
+
+pcs <- subset(pca2, V12 == 'Sardinian' | V12 == "Tunisian" | V12 == 'Jew_Tunisian' |V12 == "Egyptian" |
+                V12 == 'Greek' | V12 == 'Spanish' | V12 == 'English' | V12 == 'Turkish' | 
+                V12 == 'Hungarian' | V12 == 'Palestinian' |
+                V12 == 'Italian_North' | V12 == 'Italian_South' |
+                V12 == "French" | V12 == 'Norwegian' | 
+                V12 == 'Armenian' |  V12 == "Iranian" | 
+                V12 == "TSI.SG" | V12 == 'Syrian' | V12 == "Druze" |V12 == 'Saudi' | 
+                V12 == "BedouinA" | V12 == 'Basque' | V12 == 'Lebanese' |
+                V12 == 'Adygei' | V12 == 'Georgian' | V12 == 'Cypriot' | 
+                #V12 == 'Moroccan' | V12 == 'Mozabite' |V12 == "Libyan" |
+                #V12 == 'Kazakh' |
+                #V12 == "CHB.SG" |
+                V12 == 'Russian' | V12 == 'Ukranian' |
+                V12 == 'Chuvash' |
+                #V12 == 'BantuKenya.DG' | V12 == 'Mozabite' |
+                #V12 == 'BantuSA_Ovambo' | V12 == 'Dinka.DG' |
+                #V12 == 'BantuSA_Ovambo.DG' | V12 == 'BantuTswana.DG' |  V12 == 'Mandenka.DG' |
+                #V12 == 'Dinka.DG' | V12 == 'Masai' | V12 == 'Moroccan' |
+                V12 == 'Tunisian'|
+                #V12 == 'BedouinB' | 
+                V12 == "Sicilian",)
+
+
+pc_new <- subset(pca, Population == 'Alișar' |
+                   Population == 'Kerkenes' |
+                   Population == 'Ușalkı' |
+                   Population == 'Çadır',)
+
+pc_ref <- subset(pca, Population == 'Roman_Byzantine_Southeast' |
+                   Population == 'Roman_Byzantine_Marmara',)
+
+#Z_Roman_Byzantine_Southeast
+#Z_Roman_Byzantine_Marmara
+
+##########################################################
+
+# Create a group-means data set for labeling
+gd <- pcs %>% 
+  group_by(V12) %>% 
+  summarise(
+    VAR1 = mean(V2),
+    VAR2 = mean(V3))
+
+new_gd <- gd %>%
+  mutate(V12 = ifelse(V12 == "TSI.SG", "Tuscan", V12))%>%
+  mutate(V12 = ifelse(V12 == "Jew_Tunisian", "Tunisian Jewish", V12))
+
+##############################################################
+#labeled      
+ggplot(pcs, aes(x=V3, y=V2)) +
+  geom_point(color="lightgrey") +
+  geom_point(data=pc_ref, aes(x=PC2, y=PC1, color = Population), shape = 18, size = 5,  alpha = 0.95) +
+  geom_text(data = new_gd, aes(x=VAR2, y=VAR1, label = V12), size = 6, check_overlap = TRUE) + 
+  theme(legend.title=element_blank()) +
+  scale_colour_manual(values=clrs) +
+  geom_point(data=pc_new, aes(x=PC2, y=PC1, color = Population), shape = 18, size = 6,  alpha = 0.95) +
+  geom_label(data=pc_new, aes(x=PC2, y=PC1, color = Population, label = ID)) +
+  theme_classic() +
+  labs(title = "", x = "PC2 (1.86%)", y = "PC1 (2.45%)", color = "Population") +
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_text(size = 10, color = "black"),
+    axis.text = element_blank(),
+    axis.ticks = element_blank())
+
+#ggsave("nov2024_asor_lazaridis_plus_new.png", width = 11, height = 6)
+
+##############################################################
+#background only       
+ggplot(pcs, aes(x=V3, y=V2)) +
+  geom_point(color="lightgrey") +
+  geom_text(data = new_gd, aes(x=VAR2, y=VAR1, label = V12), size = 6, check_overlap = TRUE) + 
+  theme(legend.title=element_blank()) +
+  theme_classic() +
+  labs(title = "", x = "PC2 (1.86%)", y = "PC1 (2.45%)", color = "Population") +
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_text(size = 10, color = "black"),
+    axis.text = element_blank(),
+    axis.ticks = element_blank())
+
+#ggsave("nov2024_asor_background.png", width = 11, height = 6)
+
